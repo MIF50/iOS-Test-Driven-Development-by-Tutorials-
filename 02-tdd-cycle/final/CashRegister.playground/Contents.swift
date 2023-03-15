@@ -18,20 +18,32 @@ public class CashRegister {
 
 class CashRegisterTests: XCTestCase {
     
+    var availableFunds: Decimal!
+    var sut: CashRegister!
+    
+    override func setUp() {
+        super.setUp()
+        
+        availableFunds = 10
+        sut = CashRegister(availableFunds: availableFunds)
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        
+        availableFunds = nil
+        sut = nil
+    }
+    
+    // given a certain condition
+    // when a certain action happens
+    // then an expected result occurs
+    
     func test_init_withAvailableFunds_setsAvailableFunds() {
-        // given a certain condition
-        let availableFunds = Decimal(10)
-        
-        // when a certain action happens
-        let sut = CashRegister(availableFunds: availableFunds)
-        
-        // then an expected result occurs
         XCTAssertEqual(sut.availableFunds,availableFunds)
     }
     
     func test_addItem_oneItem_addsCostToTransactionTotal() {
-        let availableFunds = Decimal(10)
-        let sut = CashRegister(availableFunds: availableFunds)
         let itemCost = Decimal(42)
         
         sut.addItem(itemCost)
