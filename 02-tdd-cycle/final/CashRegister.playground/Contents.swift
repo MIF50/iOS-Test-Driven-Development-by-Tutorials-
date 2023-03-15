@@ -12,10 +12,6 @@ public class CashRegister {
 
 class CashRegisterTests: XCTestCase {
     
-    func test_init_createsCashRegister() {
-        XCTAssertNotNil(CashRegister())
-    }
-    
     func test_init_withAvailableFunds_setsAvailableFunds() {
         // given a certain condition
         let availableFunds = Decimal(10)
