@@ -4,7 +4,6 @@ import XCTest
 public class CashRegister {
     
     var availableFunds: Decimal
-    
     var transactionTotal: Decimal = 0
     
     public init(availableFunds: Decimal) {
@@ -13,6 +12,11 @@ public class CashRegister {
     
     public func addItem(_ cost: Decimal) {
         transactionTotal += cost
+    }
+    
+    public func acceptCashPayment(_ cash: Decimal) {
+        availableFunds += cash
+        transactionTotal -= cash
     }
 }
 
@@ -31,7 +35,7 @@ class CashRegisterTests: XCTestCase {
     
     func test_addItem_oneItem_addsCostToTransactionTotal() {
         let itemCost = Decimal(42)
-        let sut = makeSUT(availableFunds: 10)
+        let sut = makeSUT()
         
         sut.addItem(itemCost)
         
@@ -39,7 +43,7 @@ class CashRegisterTests: XCTestCase {
     }
     
     func test_addItem_twoItem_addsCostToTransactionTotal() {
-        let sut = makeSUT(availableFunds: 10)
+        let sut = makeSUT()
         let itemCost = Decimal(42)
         let itemCost2 = Decimal(100)
 
@@ -49,13 +53,33 @@ class CashRegisterTests: XCTestCase {
         XCTAssertEqual(sut.transactionTotal, itemCost + itemCost2)
     }
     
+    func test_acceptCashPayment_subtractsPaymentFromTransactionTotal() {
+        let sut = makeSUT()
+        let itemCost = Decimal(150)
+        sut.addItem(itemCost)
+        
+        let cash = Decimal(100)
+        sut.acceptCashPayment(cash)
+        
+        XCTAssertEqual(sut.transactionTotal, itemCost - cash)
+    }
+    
+    func test_acceptCashPayment_addsPaymentFromAvailableFunds() {
+        let availableFunds = Decimal(42)
+        let sut = makeSUT(availableFunds: availableFunds)
+        
+        let cash = Decimal(100)
+        sut.acceptCashPayment(cash)
+        
+        XCTAssertEqual(sut.availableFunds, availableFunds + cash)
+    }
+    
     //MARK: - Helpers
     
-    private func makeSUT(availableFunds: Decimal) -> CashRegister {
+    private func makeSUT(availableFunds: Decimal = 0) -> CashRegister {
         let sut = CashRegister(availableFunds: availableFunds)
         return sut
     }
-
 }
 
 CashRegisterTests.defaultTestSuite.run()
