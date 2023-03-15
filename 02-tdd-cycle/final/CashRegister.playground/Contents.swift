@@ -5,8 +5,14 @@ public class CashRegister {
     
     var availableFunds: Decimal = 0
     
-    public init(availableFunds: Decimal = 0) {
+    var transactionTotal: Decimal = 0
+    
+    public init(availableFunds: Decimal) {
         self.availableFunds = availableFunds
+    }
+    
+    public func addItem(_ cost: Decimal) {
+        transactionTotal = cost
     }
 }
 
@@ -21,6 +27,16 @@ class CashRegisterTests: XCTestCase {
         
         // then an expected result occurs
         XCTAssertEqual(sut.availableFunds,availableFunds)
+    }
+    
+    func test_addItem_oneItem_addsCostToTransactionTotal() {
+        let availableFunds = Decimal(10)
+        let sut = CashRegister(availableFunds: availableFunds)
+        let itemCost = Decimal(42)
+        
+        sut.addItem(itemCost)
+        
+        XCTAssertEqual(sut.transactionTotal, itemCost)
     }
 }
 
