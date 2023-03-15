@@ -12,7 +12,7 @@ public class CashRegister {
     }
     
     public func addItem(_ cost: Decimal) {
-        transactionTotal = cost
+        transactionTotal += cost
     }
 }
 
@@ -49,6 +49,16 @@ class CashRegisterTests: XCTestCase {
         sut.addItem(itemCost)
         
         XCTAssertEqual(sut.transactionTotal, itemCost)
+    }
+    
+    func test_addItem_twoItem_addsCostToTransactionTotal() {
+        let itemCost1 = Decimal(42)
+        let itemCost2 = Decimal(100)
+        
+        sut.addItem(itemCost1)
+        sut.addItem(itemCost2)
+        
+        XCTAssertEqual(sut.transactionTotal, itemCost1 + itemCost2)
     }
 }
 
