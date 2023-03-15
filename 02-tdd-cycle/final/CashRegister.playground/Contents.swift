@@ -3,7 +3,7 @@ import XCTest
 
 public class CashRegister {
     
-    var availableFunds: Decimal = 0
+    var availableFunds: Decimal
     
     var transactionTotal: Decimal = 0
     
@@ -18,33 +18,20 @@ public class CashRegister {
 
 class CashRegisterTests: XCTestCase {
     
-    var availableFunds: Decimal!
-    var sut: CashRegister!
-    
-    override func setUp() {
-        super.setUp()
-        
-        availableFunds = 10
-        sut = CashRegister(availableFunds: availableFunds)
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-        
-        availableFunds = nil
-        sut = nil
-    }
-    
     // given a certain condition
     // when a certain action happens
     // then an expected result occurs
     
     func test_init_withAvailableFunds_setsAvailableFunds() {
+        let availableFunds: Decimal = 42
+        let sut = makeSUT(availableFunds: availableFunds)
+
         XCTAssertEqual(sut.availableFunds,availableFunds)
     }
     
     func test_addItem_oneItem_addsCostToTransactionTotal() {
         let itemCost = Decimal(42)
+        let sut = makeSUT(availableFunds: 10)
         
         sut.addItem(itemCost)
         
@@ -52,14 +39,23 @@ class CashRegisterTests: XCTestCase {
     }
     
     func test_addItem_twoItem_addsCostToTransactionTotal() {
-        let itemCost1 = Decimal(42)
+        let sut = makeSUT(availableFunds: 10)
+        let itemCost = Decimal(42)
         let itemCost2 = Decimal(100)
-        
-        sut.addItem(itemCost1)
+
+        sut.addItem(itemCost)
         sut.addItem(itemCost2)
         
-        XCTAssertEqual(sut.transactionTotal, itemCost1 + itemCost2)
+        XCTAssertEqual(sut.transactionTotal, itemCost + itemCost2)
     }
+    
+    //MARK: - Helpers
+    
+    private func makeSUT(availableFunds: Decimal) -> CashRegister {
+        let sut = CashRegister(availableFunds: availableFunds)
+        return sut
+    }
+
 }
 
 CashRegisterTests.defaultTestSuite.run()
