@@ -1,4 +1,4 @@
-/// Copyright (c) 2021 Razeware LLC
+/// Copyright (c) 2023 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -30,53 +30,50 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import UIKit
+import XCTest
+@testable import FitNess
 
-extension AppState {
-  var nextStateButtonLabel: String {
-    switch self {
-    case .notStarted:
-      return "Start"
-    case .inProgress:
-      return "Pause"
-    case .paused:
-      return "Resume"
-    case .caught:
-      return "Try Again"
-    case .completed:
-      return "Start Over"
-    }
-  }
-}
-
-class StepCountController: UIViewController {
-  @IBOutlet weak var stepCountLabel: UILabel!
-  @IBOutlet var startButton: UIButton!
-  @IBOutlet weak var chaseView: ChaseView!
-
-  init() {
-    // this is a cheat to simplify chapter 3, a proper way of getting an instance will be handled in chapter 4
-    super.init(nibName: nil, bundle: nil)
-    startButton = UIButton()
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
+final class StepCountControllerTests: XCTestCase {
+  
+  func test_init_shouldButtonLabelInStart() {
+    let sut = makeSUT()
     
-    updateButton()
-  }
-
-  @IBAction func startStopPause(_ sender: Any?) {
-    AppModel.instance.start()
-    updateButton()
+    XCTAssertEqual(sut.titleStartButton, AppState.notStarted.nextStateButtonLabel)
   }
   
-  private func updateButton() {
-    let title = AppModel.instance.appState.nextStateButtonLabel
-    startButton.setTitle(title, for: .normal)
+  func test_tappingInStart_shouldAppInProgress() {
+    let sut = makeSUT()
+    
+    sut.simulateTapInStart()
+    
+    let state = AppModel.instance.appState
+    XCTAssertEqual(state, .inProgress)
+  }
+  
+  func test_tappingInStart_shouldButtonLabelInPause() {
+    let sut = makeSUT()
+    
+    sut.simulateTapInStart()
+    
+    XCTAssertEqual(sut.titleStartButton, AppState.inProgress.nextStateButtonLabel)
+  }
+  
+  //MARK: - Helpers
+  
+  private func makeSUT() -> StepCountController {
+    let sut = StepCountController()
+    sut.loadViewIfNeeded()
+    return sut
   }
 }
+
+private extension StepCountController {
+  func simulateTapInStart() {
+    startStopPause(nil)
+  }
+  
+  var titleStartButton: String? {
+    startButton.title(for: .normal)
+  }
+}
+
